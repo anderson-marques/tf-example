@@ -6,13 +6,29 @@ on:
       - main
 
 jobs:
-  terraform:
-    name: Terraform
+  setup:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [test, prod]
+        environment: ['test', 'prod']
+    outputs:
+      runner_type: ${{ steps.set-runner.outputs.runner_type }}
+    steps:
+    - name: Map environment to runner
+      id: set-runner
+      run: |
+        if [ "${{ matrix.environment }}" == "prod" ]; then
+          echo "::set-output name=runner_type::ubuntu-latest"
+        else
+          echo "::set-output name=runner_type::ubuntu-latest"
+        fi
 
+  terraform:
+    needs: setup
+    runs-on: ${{ needs.setup.outputs.runner_type }}
+    strategy:
+      matrix:
+        environment: ['test', 'prod']
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -38,7 +54,5 @@ jobs:
         terraform plan -out=tfplan
 
     - name: Terraform Apply
-      if: matrix.environment == 'test'
-      run: |
-        cd terraform/env/${{ matrix.environment }}
-        terraform apply tfplan
+      if: github.ref == 'refs/heads/main' 
+      run: terraform apply -auto-approve tfplan
