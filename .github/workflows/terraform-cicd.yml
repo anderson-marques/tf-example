@@ -46,13 +46,15 @@ jobs:
     - name: Terraform Workspace Select
       run: |
         cd env/${{ matrix.environment }}
-        terraform workspace select ${{ matrix.environment }} || terraform workspace new ${{ matrix.environment }}
+        terraform workspace select-or-create ${{ matrix.environment }}
         
     - name: Terraform Plan
       run: |
-        cd terraform/env/${{ matrix.environment }}
+        cd env/${{ matrix.environment }}
         terraform plan -out=tfplan
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' 
-      run: terraform apply -auto-approve tfplan
+      run: |
+        cd env/${{ matrix.environment }}
+        terraform apply -auto-approve tfplan
