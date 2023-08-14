@@ -46,7 +46,7 @@ jobs:
     - name: Terraform Workspace Select
       run: |
         cd env/${{ matrix.environment }}
-        terraform workspace select-or-create ${{ matrix.environment }}
+        terraform workspace select ${{ matrix.environment }} || terraform workspace new ${{ matrix.environment }}
         
     - name: Terraform Plan
       run: |
