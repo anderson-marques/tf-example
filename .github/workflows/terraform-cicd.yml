@@ -18,9 +18,9 @@ jobs:
       id: set-runner
       run: |
         if [ "${{ matrix.environment }}" == "prod" ]; then
-          echo "{runner_type}={ubuntu-latest}" >> $GITHUB_OUTPUT
+          echo "runner_type=ubuntu-latest" >> $GITHUB_OUTPUT
         else
-          echo "{runner_type}={ubuntu-latest}" >> $GITHUB_OUTPUT
+          echo "runner_type=ubuntu-latest" >> $GITHUB_OUTPUT
         fi
 
   terraform:
