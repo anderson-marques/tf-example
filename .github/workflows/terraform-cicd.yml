@@ -18,9 +18,9 @@ jobs:
       id: set-runner
       run: |
         if [ "${{ matrix.environment }}" == "prod" ]; then
-          echo "::set-output name=runner_type::ubuntu-latest"
+          echo "{runner_type}={ubuntu-latest}" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=runner_type::ubuntu-latest"
+          echo "{runner_type}={ubuntu-latest}" >> $GITHUB_OUTPUT
         fi
 
   terraform:
@@ -40,12 +40,12 @@ jobs:
 
     - name: Terraform Init
       run: |
-        cd terraform/env/${{ matrix.environment }}
+        cd env/${{ matrix.environment }}
         terraform init
 
     - name: Terraform Workspace Select
       run: |
-        cd terraform/env/${{ matrix.environment }}
+        cd env/${{ matrix.environment }}
         terraform workspace select ${{ matrix.environment }} || terraform workspace new ${{ matrix.environment }}
         
     - name: Terraform Plan
