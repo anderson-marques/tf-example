@@ -4,3 +4,27 @@ on:
   push:
     branches:
       - main
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.x
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # if using Terraform Cloud/Enterprise
+
+    - name: Terraform Initialize
+      run: terraform init
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Format Check
+      run: terraform fmt -check
